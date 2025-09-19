@@ -2,9 +2,9 @@
 // Database configuration
 class Database {
     private $host = 'localhost';
-    private $db_name = 'innomatics';
-    private $username = 'root';
-    private $password = '';
+    private $db_name = 'bdotsoft_innomatics';
+    private $username = 'bdotsoft_kiran';
+    private $password = 'K143iran';
     private $conn;
 
     public function getConnection() {
