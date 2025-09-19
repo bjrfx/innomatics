@@ -304,6 +304,7 @@
     </div>
   </div>
 
+  <script src="js/config.js"></script>
   <script>
     class AdminAuth {
       constructor() {
@@ -328,7 +329,7 @@
 
       async checkAuthStatus() {
         try {
-          const response = await fetch('http://localhost/innomatics/api/auth.php');
+          const response = await fetch(CONFIG.API.AUTH);
           if (response.ok) {
             const data = await response.json();
             if (data.success) {
@@ -388,7 +389,7 @@
         this.setLoading(true);
 
         try {
-          const response = await fetch('http://localhost/innomatics/api/auth.php', {
+          const response = await fetch(CONFIG.API.AUTH, {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',

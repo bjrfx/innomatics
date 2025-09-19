@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API Configuration Test</title>
+</head>
+<body>
+    <h1>API Configuration Test</h1>
+    <div id="test-results"></div>
+    
+    <script src="js/config.js"></script>
+    <script>
+        function runConfigTest() {
+            const results = document.getElementById('test-results');
+            let html = '<h2>Configuration Test Results:</h2>';
+            
+            html += `<p><strong>Environment:</strong> ${CONFIG.ENVIRONMENT}</p>`;
+            html += `<p><strong>Base URL:</strong> ${CONFIG.BASE_URL}</p>`;
+            html += `<p><strong>API Base:</strong> ${CONFIG.API.BASE}</p>`;
+            html += `<p><strong>Auth URL:</strong> ${CONFIG.API.AUTH}</p>`;
+            html += `<p><strong>Subjects URL:</strong> ${CONFIG.API.SUBJECTS}</p>`;
+            html += `<p><strong>Recordings URL:</strong> ${CONFIG.API.RECORDINGS}</p>`;
+            html += `<p><strong>Debug Mode:</strong> ${CONFIG.DEBUG}</p>`;
+            
+            // Test if we're correctly detecting production vs development
+            html += `<p><strong>Is Development:</strong> ${isDevelopment()}</p>`;
+            html += `<p><strong>Current Hostname:</strong> ${window.location.hostname}</p>`;
+            html += `<p><strong>Current Origin:</strong> ${window.location.origin}</p>`;
+            
+            results.innerHTML = html;
+        }
+        
+        // Run test when page loads
+        document.addEventListener('DOMContentLoaded', runConfigTest);
+    </script>
+</body>
+</html>

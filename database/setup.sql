@@ -1,7 +1,7 @@
 -- Innomatics Recordings Database Setup
 -- Run this SQL script in your MySQL database
 
-USE innomatics;
+USE bdotsoft_innomatics;
 
 -- Create subjects table
 CREATE TABLE IF NOT EXISTS subjects (

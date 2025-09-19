@@ -1,11 +1,9 @@
 const API_KEY = '287953e9c96e838e691447eeaae01dc9';
 const ORG_ID = '257';
 
-// Debug mode for troubleshooting
-const DEBUG_MODE = true;
-
+// Use CONFIG for debug mode and other settings
 function debugLog(...args) {
-  if (DEBUG_MODE) {
+  if (CONFIG && CONFIG.DEBUG) {
     console.log('[DEBUG]', ...args);
   }
 }
@@ -1334,7 +1332,7 @@ async function loadRecordingsPage() {
   try {
     showRecordingsSkeleton();
     
-    const response = await fetch('api/recordings.php');
+    const response = await fetch(CONFIG.API.RECORDINGS);
     const data = await response.json();
     
     if (data.success && data.data.length > 0) {

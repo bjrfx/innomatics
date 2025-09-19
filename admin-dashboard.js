@@ -26,7 +26,7 @@ class AdminDashboard {
 
   async checkAuth() {
     try {
-      const response = await fetch('api/auth.php');
+      const response = await fetch(CONFIG.API.AUTH);
       const data = await response.json();
       
       if (!data.success) {
@@ -137,7 +137,7 @@ class AdminDashboard {
   // Subject management
   async loadSubjects() {
     try {
-      const response = await fetch('api/subjects.php');
+      const response = await fetch(CONFIG.API.SUBJECTS);
       const data = await response.json();
       
       if (data.success) {
@@ -233,7 +233,7 @@ class AdminDashboard {
     }
 
     try {
-      const response = await fetch('api/subjects.php', {
+      const response = await fetch(CONFIG.API.SUBJECTS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -283,7 +283,7 @@ class AdminDashboard {
     }
 
     try {
-      const response = await fetch('api/subjects.php', {
+      const response = await fetch(CONFIG.API.SUBJECTS, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -314,7 +314,7 @@ class AdminDashboard {
     }
 
     try {
-      const response = await fetch('api/subjects.php', {
+      const response = await fetch(CONFIG.API.SUBJECTS, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id })
@@ -339,7 +339,7 @@ class AdminDashboard {
   // Recording management
   async loadRecordings() {
     try {
-      const response = await fetch('api/recordings.php');
+      const response = await fetch(CONFIG.API.RECORDINGS);
       const data = await response.json();
       
       if (data.success) {
@@ -475,7 +475,7 @@ class AdminDashboard {
     }
 
     try {
-      const response = await fetch('api/recordings.php', {
+      const response = await fetch(CONFIG.API.RECORDINGS, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData)
@@ -504,7 +504,7 @@ class AdminDashboard {
     }
 
     try {
-      const response = await fetch('api/recordings.php', {
+      const response = await fetch(CONFIG.API.RECORDINGS, {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id })
@@ -545,7 +545,7 @@ class AdminDashboard {
     }
 
     try {
-      await fetch('api/auth.php', { method: 'DELETE' });
+      await fetch(CONFIG.API.AUTH, { method: 'DELETE' });
       window.location.href = 'admin.html';
     } catch (error) {
       console.error('Logout error:', error);
