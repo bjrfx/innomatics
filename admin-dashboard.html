@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Innomatics Admin Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-header {
+      background: var(--bg-card);
+      border-bottom: 1px solid var(--border-color);
+      padding: 1rem 2rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: var(--shadow-light);
+    }
+
+    .admin-nav {
+      display: flex;
+      gap: 2rem;
+      margin-bottom: 2rem;
+    }
+
+    .nav-tab {
+      background: none;
+      border: none;
+      color: var(--text-secondary);
+      padding: 1rem 1.5rem;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-weight: 500;
+    }
+
+    .nav-tab.active {
+      background: var(--primary-color);
+      color: white;
+    }
+
+    .nav-tab:hover {
+      background: var(--bg-hover);
+      color: var(--text-primary);
+    }
+
+    .admin-content {
+      padding: 2rem;
+    }
+
+    .section {
+      display: none;
+    }
+
+    .section.active {
+      display: block;
+    }
+
+    .form-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      box-shadow: var(--shadow-light);
+    }
+
+    .data-table {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+    }
+
+    .table-header {
+      background: rgba(99, 102, 241, 0.1);
+      padding: 1.5rem 2rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .table-content {
+      padding: 1.5rem 2rem;
+    }
+
+    .data-grid {
+      display: grid;
+      gap: 1rem;
+    }
+
+    .data-item {
+      background: rgba(99, 102, 241, 0.05);
+      border: 1px solid rgba(99, 102, 241, 0.1);
+      border-radius: 12px;
+      padding: 1.5rem;
+      transition: all 0.3s ease;
+    }
+
+    .data-item:hover {
+      background: rgba(99, 102, 241, 0.1);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .item-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 1rem;
+    }
+
+    .item-title {
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-primary);
+    }
+
+    .item-actions {
+      display: flex;
+      gap: 0.5rem;
+    }
+
+    .btn-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background: var(--bg-hover);
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-icon:hover {
+      background: var(--primary-color);
+      color: white;
+      border-color: var(--primary-color);
+    }
+
+    .btn-icon.danger:hover {
+      background: var(--danger-color);
+      border-color: var(--danger-color);
+    }
+
+    .video-preview {
+      display: flex;
+      gap: 1rem;
+      align-items: center;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.02);
+      border-radius: 8px;
+      margin-top: 1rem;
+    }
+
+    .video-thumbnail {
+      width: 120px;
+      height: 68px;
+      border-radius: 8px;
+      object-fit: cover;
+      background: var(--bg-hover);
+    }
+
+    .video-info {
+      flex: 1;
+    }
+
+    .video-title {
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 0.25rem;
+    }
+
+    .video-meta {
+      font-size: 0.85rem;
+      color: var(--text-secondary);
+    }
+
+    .modal {
+      background: rgba(0, 0, 0, 0.8);
+      backdrop-filter: blur(10px);
+    }
+
+    .modal-content {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      color: var(--text-primary);
+    }
+
+    .modal-header {
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(99, 102, 241, 0.1);
+    }
+
+    .btn-close {
+      filter: invert(1);
+    }
+
+    .form-control, .form-select {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-primary);
+      border-radius: 8px;
+    }
+
+    .form-control:focus, .form-select:focus {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: var(--primary-color);
+      color: var(--text-primary);
+      box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
+    }
+
+    .form-control::placeholder {
+      color: var(--text-secondary);
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+      border: none;
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, var(--secondary-color), var(--primary-color));
+      box-shadow: var(--shadow-medium);
+    }
+
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 16px;
+      padding: 1.5rem;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-5px);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .stat-number {
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--primary-color);
+      margin-bottom: 0.5rem;
+    }
+
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Admin Header -->
+  <div class="admin-header">
+    <div class="header-content">
+      <div class="header-left">
+        <div class="dashboard-title">
+          <i class="fas fa-shield-alt me-2"></i>
+          Admin Dashboard
+        </div>
+      </div>
+      <div class="header-right">
+        <span id="adminName" class="me-3">Loading...</span>
+        <button class="action-btn" id="logoutBtn" title="Logout">
+          <i class="fas fa-sign-out-alt"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Admin Content -->
+  <div class="admin-content">
+    <!-- Stats Overview -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-number" id="totalSubjects">0</div>
+        <div class="stat-label">Total Subjects</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalRecordings">0</div>
+        <div class="stat-label">Total Recordings</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-number" id="totalViews">0</div>
+        <div class="stat-label">Total Views</div>
+      </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <div class="admin-nav">
+      <button class="nav-tab active" data-section="subjects">
+        <i class="fas fa-folder me-2"></i>
+        Manage Subjects
+      </button>
+      <button class="nav-tab" data-section="recordings">
+        <i class="fas fa-video me-2"></i>
+        Manage Recordings
+      </button>
+    </div>
+
+    <!-- Subjects Section -->
+    <div id="subjects" class="section active">
+      <div class="form-container">
+        <h4 class="mb-3">
+          <i class="fas fa-plus-circle me-2"></i>
+          Add New Subject
+        </h4>
+        <form id="subjectForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="subjectName" class="form-label">Subject Name</label>
+                <input type="text" class="form-control" id="subjectName" placeholder="e.g., Python Programming" required>
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <label for="subjectColor" class="form-label">Color</label>
+                <input type="color" class="form-control" id="subjectColor" value="#6366f1">
+              </div>
+            </div>
+            <div class="col-md-3">
+              <div class="mb-3">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fas fa-plus me-2"></i>
+                  Add Subject
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="subjectDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="subjectDescription" rows="3" placeholder="Brief description of the subject"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="data-table">
+        <div class="table-header">
+          <h5 class="mb-0">
+            <i class="fas fa-list me-2"></i>
+            All Subjects
+          </h5>
+          <button class="action-btn" id="refreshSubjects">
+            <i class="fas fa-refresh"></i>
+          </button>
+        </div>
+        <div class="table-content">
+          <div class="data-grid" id="subjectsGrid">
+            <!-- Subjects will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Recordings Section -->
+    <div id="recordings" class="section">
+      <div class="form-container">
+        <h4 class="mb-3">
+          <i class="fas fa-plus-circle me-2"></i>
+          Add New Recording
+        </h4>
+        <form id="recordingForm">
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="recordingSubject" class="form-label">Subject</label>
+                <select class="form-select" id="recordingSubject" required>
+                  <option value="">Select Subject</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="recordingTitle" class="form-label">Video Title</label>
+                <input type="text" class="form-control" id="recordingTitle" placeholder="Enter video title" required>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-8">
+              <div class="mb-3">
+                <label for="youtubeUrl" class="form-label">YouTube URL</label>
+                <input type="url" class="form-control" id="youtubeUrl" placeholder="https://www.youtube.com/watch?v=..." required>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="mb-3">
+                <label for="recordingDuration" class="form-label">Duration</label>
+                <input type="text" class="form-control" id="recordingDuration" placeholder="e.g., 45:30">
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label for="uploadDate" class="form-label">Upload Date</label>
+                <input type="date" class="form-control" id="uploadDate">
+              </div>
+            </div>
+            <div class="col-md-6">
+              <div class="mb-3">
+                <label class="form-label">&nbsp;</label>
+                <button type="submit" class="btn btn-primary w-100">
+                  <i class="fas fa-plus me-2"></i>
+                  Add Recording
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="mb-3">
+            <label for="recordingDescription" class="form-label">Description</label>
+            <textarea class="form-control" id="recordingDescription" rows="3" placeholder="Brief description of the video content"></textarea>
+          </div>
+        </form>
+      </div>
+
+      <div class="data-table">
+        <div class="table-header">
+          <h5 class="mb-0">
+            <i class="fas fa-video me-2"></i>
+            All Recordings
+          </h5>
+          <div class="d-flex gap-2">
+            <select class="form-select" id="filterBySubject" style="width: 200px;">
+              <option value="">All Subjects</option>
+            </select>
+            <button class="action-btn" id="refreshRecordings">
+              <i class="fas fa-refresh"></i>
+            </button>
+          </div>
+        </div>
+        <div class="table-content">
+          <div class="data-grid" id="recordingsGrid">
+            <!-- Recordings will be loaded here -->
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Subject Modal -->
+  <div class="modal fade" id="editSubjectModal" tabindex="-1">
+    <div class="modal-dialog">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title">Edit Subject</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="editSubjectForm">
+            <input type="hidden" id="editSubjectId">
+            <div class="mb-3">
+              <label for="editSubjectName" class="form-label">Subject Name</label>
+              <input type="text" class="form-control" id="editSubjectName" required>
+            </div>
+            <div class="mb-3">
+              <label for="editSubjectColor" class="form-label">Color</label>
+              <input type="color" class="form-control" id="editSubjectColor">
+            </div>
+            <div class="mb-3">
+              <label for="editSubjectDescription" class="form-label">Description</label>
+              <textarea class="form-control" id="editSubjectDescription" rows="3"></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+          <button type="button" class="btn btn-primary" id="saveSubjectBtn">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="admin-dashboard.js"></script>
+</body>
+</html>

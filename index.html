@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Innomatics Learning Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <!-- Loading Overlay -->
+  <div id="loadingOverlay" class="loading-overlay">
+    <div class="loading-spinner">
+      <div class="spinner"></div>
+      <p>Loading Dashboard...</p>
+    </div>
+  </div>
+
+  <!-- Sidebar -->
+  <nav class="sidebar">
+    <div class="sidebar-header">
+      <div class="logo" id="sidebarLogo">
+        <!-- Institution logo will be inserted here -->
+        <div class="sidebar-logo-skeleton" id="sidebarLogoSkeleton">
+          <div class="skeleton-sidebar-logo"></div>
+        </div>
+      </div>
+    </div>
+    <ul class="sidebar-menu">
+      <li class="active">
+        <a href="#dashboard">
+          <i class="fas fa-chart-line"></i>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li>
+        <a href="#profile">
+          <i class="fas fa-user"></i>
+          <span>Profile</span>
+        </a>
+      </li>
+      <li>
+        <a href="#exams">
+          <i class="fas fa-book-open"></i>
+          <span>Exams</span>
+        </a>
+      </li>
+      <li>
+        <a href="#recordings">
+          <i class="fas fa-video"></i>
+          <span>Recordings</span>
+        </a>
+      </li>
+      <li>
+        <a href="#analytics">
+          <i class="fas fa-chart-bar"></i>
+          <span>Analytics</span>
+        </a>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Main Content -->
+  <div class="main-content">
+    <!-- Header -->
+    <header class="dashboard-header">
+      <div class="header-content">
+        <div class="header-left">
+          <button class="sidebar-toggle" id="sidebarToggle">
+            <i class="fas fa-bars"></i>
+          </button>
+          <div class="dashboard-title" id="dashboardTitle">
+            <i class="fas fa-chart-line me-2"></i>
+            Learning Dashboard
+          </div>
+        </div>
+        <div class="header-right">
+          <button class="theme-toggle" id="themeToggle" title="Toggle theme">
+            <i class="fas fa-moon" id="themeIcon"></i>
+          </button>
+          <div class="refresh-indicator" id="refreshIndicator">
+            <i class="fas fa-sync-alt"></i>
+            <span>Auto-refreshing...</span>
+          </div>
+          <div class="user-avatar">
+            <i class="fas fa-user-circle"></i>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-container">
+      <div class="stat-card" data-stat="users">
+        <div class="stat-icon">
+          <i class="fas fa-users"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number" id="userCount">-</div>
+          <div class="stat-label">Active Users</div>
+        </div>
+      </div>
+      <div class="stat-card" data-stat="exams">
+        <div class="stat-icon">
+          <i class="fas fa-clipboard-list"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number" id="examCount">-</div>
+          <div class="stat-label">Available Exams</div>
+        </div>
+      </div>
+      <div class="stat-card" data-stat="subjects">
+        <div class="stat-icon">
+          <i class="fas fa-book"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number" id="subjectCount">-</div>
+          <div class="stat-label">Subjects</div>
+        </div>
+      </div>
+      <div class="stat-card" data-stat="completion">
+        <div class="stat-icon">
+          <i class="fas fa-trophy"></i>
+        </div>
+        <div class="stat-content">
+          <div class="stat-number" id="completionRate">-</div>
+          <div class="stat-label">Completion Rate</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Dashboard Content -->
+    <div class="dashboard-content">
+      <div class="row g-4">
+        <!-- User Profile Card -->
+        <div class="col-lg-6">
+          <div class="dashboard-card user-profile-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-user-circle me-2"></i>
+                User Profile
+              </div>
+              <div class="card-actions">
+                <button class="action-btn" id="refreshUser">
+                  <i class="fas fa-refresh"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Skeleton for User Profile -->
+              <div class="profile-skeleton" id="userSkeleton">
+                <div class="skeleton-avatar"></div>
+                <div class="skeleton-info">
+                  <div class="skeleton-line skeleton-line-title"></div>
+                  <div class="skeleton-line skeleton-line-subtitle"></div>
+                  <div class="skeleton-line skeleton-line-text"></div>
+                  <div class="skeleton-line skeleton-line-text short"></div>
+                </div>
+              </div>
+
+              <!-- Actual User Profile Content -->
+              <div class="user-profile-content" id="userProfileContent" style="display: none;">
+                <div class="user-avatar-section">
+                  <div class="user-avatar-large">
+                    <i class="fas fa-user"></i>
+                  </div>
+                  <div class="user-basic-info">
+                    <h3 class="user-name" id="userName">-</h3>
+                    <p class="user-username" id="userUsername">@username</p>
+                    <div class="user-status online">
+                      <i class="fas fa-circle"></i>
+                      Online
+                    </div>
+                  </div>
+                </div>
+                <div class="user-details-grid">
+                  <div class="detail-item">
+                    <i class="fas fa-envelope"></i>
+                    <div>
+                      <span class="label">Email</span>
+                      <span class="value" id="userEmail">-</span>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <i class="fas fa-globe"></i>
+                    <div>
+                      <span class="label">Country</span>
+                      <span class="value" id="userCountry">-</span>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                      <span class="label">Contact</span>
+                      <span class="value" id="userContact">-</span>
+                    </div>
+                  </div>
+                  <div class="detail-item">
+                    <i class="fas fa-id-card"></i>
+                    <div>
+                      <span class="label">User ID</span>
+                      <span class="value" id="userIdDisplay">-</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Exam Subjects Card -->
+        <div class="col-lg-6">
+          <div class="dashboard-card exam-subjects-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-book-open me-2"></i>
+                Exam Subjects
+              </div>
+              <div class="card-actions">
+                <button class="action-btn" id="refreshExams">
+                  <i class="fas fa-refresh"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Skeleton for Exam Subjects -->
+              <div class="exam-skeleton" id="examSkeleton">
+                <div class="skeleton-exam-item">
+                  <div class="skeleton-circle"></div>
+                  <div class="skeleton-exam-content">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                  </div>
+                  <div class="skeleton-badge"></div>
+                </div>
+                <div class="skeleton-exam-item">
+                  <div class="skeleton-circle"></div>
+                  <div class="skeleton-exam-content">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                  </div>
+                  <div class="skeleton-badge"></div>
+                </div>
+                <div class="skeleton-exam-item">
+                  <div class="skeleton-circle"></div>
+                  <div class="skeleton-exam-content">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                  </div>
+                  <div class="skeleton-badge"></div>
+                </div>
+              </div>
+
+              <!-- Actual Exam Subjects Content -->
+              <div class="exam-subjects-content" id="examSubjectsContent" style="display: none;">
+                <div class="subjects-list" id="subjectsList">
+                  <!-- Subjects will be populated here -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Class Attendance -->
+        <div class="col-12">
+          <div class="dashboard-card attendance-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-calendar-check me-2"></i>
+                Class Attendance
+              </div>
+              <div class="card-actions">
+                <div class="attendance-stats" id="attendanceStats">
+                  <span class="stat-item">
+                    <i class="fas fa-check-circle text-success"></i>
+                    <span id="presentCount">-</span> Present
+                  </span>
+                  <span class="stat-item">
+                    <i class="fas fa-times-circle text-danger"></i>
+                    <span id="absentCount">-</span> Absent
+                  </span>
+                  <span class="stat-item">
+                    <i class="fas fa-clock text-warning"></i>
+                    <span id="futureCount">-</span> Upcoming
+                  </span>
+                </div>
+                <button class="action-btn" id="refreshAttendance">
+                  <i class="fas fa-refresh"></i>
+                </button>
+                <button class="action-btn" id="testAttendanceAPI" title="Test API">
+                  <i class="fas fa-vial"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Skeleton for Attendance -->
+              <div class="attendance-skeleton" id="attendanceSkeleton">
+                <div class="skeleton-attendance-item">
+                  <div class="skeleton-date-badge"></div>
+                  <div class="skeleton-attendance-content">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                  </div>
+                  <div class="skeleton-status-badge"></div>
+                </div>
+                <div class="skeleton-attendance-item">
+                  <div class="skeleton-date-badge"></div>
+                  <div class="skeleton-attendance-content">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                  </div>
+                  <div class="skeleton-status-badge"></div>
+                </div>
+                <div class="skeleton-attendance-item">
+                  <div class="skeleton-date-badge"></div>
+                  <div class="skeleton-attendance-content">
+                    <div class="skeleton-line skeleton-line-title"></div>
+                    <div class="skeleton-line skeleton-line-subtitle"></div>
+                  </div>
+                  <div class="skeleton-status-badge"></div>
+                </div>
+              </div>
+
+              <!-- Actual Attendance Content -->
+              <div class="attendance-content" id="attendanceContent" style="display: none;">
+                <div class="attendance-summary">
+                  <div class="attendance-overview">
+                    <div class="attendance-chart" id="attendanceChart">
+                      <div class="chart-center">
+                        <span class="attendance-percentage" id="attendancePercentage">--%</span>
+                        <span class="attendance-label">Attendance Rate</span>
+                      </div>
+                    </div>
+                    <div class="attendance-breakdown">
+                      <div class="breakdown-item present">
+                        <div class="breakdown-count" id="presentCountDetail">0</div>
+                        <div class="breakdown-label">Classes Attended</div>
+                      </div>
+                      <div class="breakdown-item absent">
+                        <div class="breakdown-count" id="absentCountDetail">0</div>
+                        <div class="breakdown-label">Classes Missed</div>
+                      </div>
+                      <div class="breakdown-item future">
+                        <div class="breakdown-count" id="futureCountDetail">0</div>
+                        <div class="breakdown-label">Upcoming Classes</div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                
+                <div class="attendance-timeline">
+                  <h5 class="timeline-title">
+                    <i class="fas fa-history me-2"></i>
+                    Recent Classes
+                  </h5>
+                  <div class="timeline-container" id="attendanceTimeline">
+                    <!-- Timeline items will be populated here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Institution Info Card -->
+        <div class="col-lg-6">
+          <div class="dashboard-card institution-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-university me-2"></i>
+                Institution Info
+              </div>
+              <div class="card-actions">
+                <button class="action-btn" id="refreshInstitution">
+                  <i class="fas fa-refresh"></i>
+                </button>
+              </div>
+            </div>
+            <div class="card-body">
+              <!-- Skeleton for Institution Info -->
+              <div class="institution-skeleton" id="institutionSkeleton">
+                <div class="skeleton-line" style="width: 80%;"></div>
+                <div class="skeleton-line" style="width: 60%;"></div>
+                <div class="skeleton-line" style="width: 70%;"></div>
+                <div class="skeleton-line" style="width: 50%;"></div>
+              </div>
+              
+              <!-- Institution Content -->
+              <div class="institution-content" id="institutionContent" style="display: none;">
+                <div id="institutionCardContent">
+                  <!-- Will be populated by JavaScript -->
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Institution Stats Card -->
+        <div class="col-lg-6">
+          <div class="dashboard-card stats-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-trophy me-2"></i>
+                Our Achievements
+              </div>
+              <div class="card-actions">
+                <span class="badge bg-success">Excellence</span>
+              </div>
+            </div>
+            <div class="card-body">
+              <div id="institutionStats">
+                <!-- Will be populated by JavaScript -->
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Analytics Charts -->
+        <div class="col-12">
+          <div class="dashboard-card analytics-card">
+            <div class="card-header">
+              <div class="card-title">
+                <i class="fas fa-chart-bar me-2"></i>
+                Learning Analytics
+              </div>
+              <div class="card-actions">
+                <div class="view-toggle">
+                  <button class="toggle-btn active" data-view="overview">Overview</button>
+                  <button class="toggle-btn" data-view="detailed">Detailed</button>
+                </div>
+              </div>
+            </div>
+            <div class="card-body">
+              <div class="analytics-skeleton" id="analyticsSkeleton">
+                <div class="skeleton-chart"></div>
+                <div class="skeleton-legend">
+                  <div class="skeleton-legend-item"></div>
+                  <div class="skeleton-legend-item"></div>
+                  <div class="skeleton-legend-item"></div>
+                </div>
+              </div>
+              <div class="analytics-content" id="analyticsContent" style="display: none;">
+                <div class="progress-overview">
+                  <div class="progress-item">
+                    <span class="progress-label">Overall Progress</span>
+                    <div class="progress-bar-container">
+                      <div class="progress-bar" data-progress="75">
+                        <div class="progress-fill"></div>
+                      </div>
+                      <span class="progress-text">75%</span>
+                    </div>
+                  </div>
+                  <div class="progress-item">
+                    <span class="progress-label">Exam Completion</span>
+                    <div class="progress-bar-container">
+                      <div class="progress-bar" data-progress="60">
+                        <div class="progress-fill"></div>
+                      </div>
+                      <span class="progress-text">60%</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Recordings Section (Hidden by default) -->
+  <div id="recordingsSection" class="recordings-section" style="display: none;">
+    <div class="recordings-header">
+      <div class="recordings-title">
+        <i class="fas fa-video me-2"></i>
+        Class Recordings
+      </div>
+      <div class="recordings-actions">
+        <div class="search-container">
+          <input type="text" id="recordingsSearch" placeholder="Search recordings..." class="search-input">
+          <i class="fas fa-search search-icon"></i>
+        </div>
+        <select id="subjectFilter" class="subject-filter">
+          <option value="">All Subjects</option>
+        </select>
+        <button class="action-btn" id="refreshRecordings" title="Refresh recordings">
+          <i class="fas fa-refresh"></i>
+        </button>
+      </div>
+    </div>
+
+    <div class="recordings-content">
+      <!-- Loading skeleton -->
+      <div class="recordings-skeleton" id="recordingsSkeleton">
+        <div class="skeleton-subject-group">
+          <div class="skeleton-subject-header"></div>
+          <div class="skeleton-video-grid">
+            <div class="skeleton-video-card"></div>
+            <div class="skeleton-video-card"></div>
+            <div class="skeleton-video-card"></div>
+          </div>
+        </div>
+        <div class="skeleton-subject-group">
+          <div class="skeleton-subject-header"></div>
+          <div class="skeleton-video-grid">
+            <div class="skeleton-video-card"></div>
+            <div class="skeleton-video-card"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Actual recordings content -->
+      <div class="recordings-list" id="recordingsList" style="display: none;">
+        <!-- Subject groups will be populated here -->
+      </div>
+
+      <!-- No recordings message -->
+      <div class="no-recordings" id="noRecordings" style="display: none;">
+        <div class="no-recordings-icon">
+          <i class="fas fa-video-slash"></i>
+        </div>
+        <h3>No Recordings Found</h3>
+        <p>No recordings are available at the moment. Check back later for new content.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notifications -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="script.js"></script>
+</body>
+</html>
