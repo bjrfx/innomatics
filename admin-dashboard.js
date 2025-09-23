@@ -69,8 +69,12 @@ class AdminDashboard {
     // Save edited subject
     document.getElementById('saveSubjectBtn').addEventListener('click', () => this.saveEditedSubject());
 
+    // Save edited recording
+    document.getElementById('saveRecordingBtn').addEventListener('click', () => this.saveEditedRecording());
+
     // YouTube URL validation
-    document.getElementById('youtubeUrl').addEventListener('blur', (e) => this.validateYouTubeUrl(e.target.value));
+    document.getElementById('youtubeUrl').addEventListener('blur', (e) => this.validateYouTubeUrl(e.target.value, 'youtubeUrl'));
+    document.getElementById('editYoutubeUrl').addEventListener('blur', (e) => this.validateYouTubeUrl(e.target.value, 'editYoutubeUrl'));
   }
 
   switchSection(section) {
@@ -191,7 +195,7 @@ class AdminDashboard {
   }
 
   populateSubjectDropdowns() {
-    const selects = ['recordingSubject', 'filterBySubject'];
+    const selects = ['recordingSubject', 'filterBySubject', 'editRecordingSubject'];
     
     selects.forEach(selectId => {
       const select = document.getElementById(selectId);
@@ -399,6 +403,9 @@ class AdminDashboard {
                       <a href="${recording.youtube_url}" target="_blank" class="btn-icon" title="Watch on YouTube">
                         <i class="fab fa-youtube"></i>
                       </a>
+                      <div class="btn-icon" onclick="adminDashboard.editRecording(${recording.id})" title="Edit">
+                        <i class="fas fa-edit"></i>
+                      </div>
                       <div class="btn-icon danger" onclick="adminDashboard.deleteRecording(${recording.id})" title="Delete">
                         <i class="fas fa-trash"></i>
                       </div>
@@ -425,13 +432,13 @@ class AdminDashboard {
     this.renderRecordings(filtered);
   }
 
-  validateYouTubeUrl(url) {
+  validateYouTubeUrl(url, inputId = 'youtubeUrl') {
     if (!url) return true;
     
     const youtubeRegex = /^(https?:\/\/)?(www\.)?(youtube\.com\/watch\?v=|youtu\.be\/)[\w-]+(&\S*)?$/;
     const isValid = youtubeRegex.test(url);
     
-    const input = document.getElementById('youtubeUrl');
+    const input = document.getElementById(inputId);
     if (!isValid) {
       input.classList.add('is-invalid');
       this.showToast('Please enter a valid YouTube URL', 'error');
@@ -470,7 +477,7 @@ class AdminDashboard {
       return;
     }
 
-    if (!this.validateYouTubeUrl(formData.youtube_url)) {
+    if (!this.validateYouTubeUrl(formData.youtube_url, 'youtubeUrl')) {
       return;
     }
 
@@ -522,6 +529,101 @@ class AdminDashboard {
     } catch (error) {
       console.error('Delete recording error:', error);
       this.showToast('Network error deleting recording', 'error');
+    }
+  }
+
+  editRecording(id) {
+    // Find the recording across all subject groups
+    let recording = null;
+    let subjectId = null;
+    
+    for (const group of this.recordings) {
+      const found = group.recordings.find(r => r.id == id);
+      if (found) {
+        recording = found;
+        subjectId = group.subject.id;
+        break;
+      }
+    }
+    
+    if (!recording) return;
+
+    // Populate the edit form
+    document.getElementById('editRecordingId').value = recording.id;
+    document.getElementById('editRecordingSubject').value = subjectId;
+    document.getElementById('editRecordingTitle').value = recording.title;
+    document.getElementById('editYoutubeUrl').value = recording.youtube_url;
+    document.getElementById('editRecordingDescription').value = recording.description || '';
+    document.getElementById('editRecordingDuration').value = recording.duration || '';
+    
+    // Format date for input
+    if (recording.upload_date) {
+      const date = new Date(recording.upload_date);
+      const formattedDate = date.toISOString().split('T')[0];
+      document.getElementById('editUploadDate').value = formattedDate;
+    } else {
+      document.getElementById('editUploadDate').value = '';
+    }
+
+    const modal = new bootstrap.Modal(document.getElementById('editRecordingModal'));
+    modal.show();
+  }
+
+  async saveEditedRecording() {
+    const formData = {
+      id: document.getElementById('editRecordingId').value,
+      subject_id: document.getElementById('editRecordingSubject').value,
+      title: document.getElementById('editRecordingTitle').value.trim(),
+      youtube_url: document.getElementById('editYoutubeUrl').value.trim(),
+      description: document.getElementById('editRecordingDescription').value.trim(),
+      duration: document.getElementById('editRecordingDuration').value.trim(),
+      upload_date: document.getElementById('editUploadDate').value
+    };
+
+    // Validation
+    if (!formData.subject_id) {
+      this.showToast('Please select a subject', 'error');
+      return;
+    }
+
+    if (!formData.title) {
+      this.showToast('Video title is required', 'error');
+      return;
+    }
+
+    if (!formData.youtube_url) {
+      this.showToast('YouTube URL is required', 'error');
+      return;
+    }
+
+    if (!this.validateYouTubeUrl(formData.youtube_url, 'editYoutubeUrl')) {
+      return;
+    }
+
+    try {
+      const response = await fetch(CONFIG.API.RECORDINGS, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(formData)
+      });
+
+      const data = await response.json();
+      
+      if (data.success) {
+        this.showToast('Recording updated successfully', 'success');
+        
+        // Close modal
+        const modal = bootstrap.Modal.getInstance(document.getElementById('editRecordingModal'));
+        modal.hide();
+        
+        await this.loadRecordings();
+        await this.updateStats();
+      } else {
+        this.showToast(data.error || 'Failed to update recording', 'error');
+      }
+    } catch (error) {
+      console.error('Update recording error:', error);
+      this.showToast('Network error updating recording', 'error');
     }
   }
 
