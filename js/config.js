@@ -13,7 +13,7 @@ const CONFIG = {
   
   // External API configuration (these remain the same)
   EXTERNAL_API: {
-    KEY: '8c4e5f1cbc5d6d2cfa343b375fb04ac9',
+    KEY: '621f9c81ed009af3605af0d1e244967c',
     ORG_ID: '257',
     BASE_URL: 'https://innomatics-api.edmingle.com/nuSource/api/v1'
   },
