@@ -1,5 +1,15 @@
-const API_KEY = '621f9c81ed009af3605af0d1e244967c';
-const ORG_ID = '257';
+// Use settings manager for API credentials instead of hardcoded values
+function getAPICredentials() {
+  if (window.settingsManager) {
+    return window.settingsManager.getAPICredentials();
+  }
+  
+  // Fallback to hardcoded values if settings manager is not available
+  return {
+    apiKey: '621f9c81ed009af3605af0d1e244967c',
+    orgId: '257'
+  };
+}
 
 // Use CONFIG for debug mode and other settings
 function debugLog(...args) {
@@ -104,55 +114,25 @@ class ThemeManager {
 
 const themeManager = new ThemeManager();
 
-// Toast Notification System
+// Toast Notification System - Updated to use NotificationManager
 class ToastManager {
   constructor() {
-    this.container = document.getElementById('toastContainer');
+    // Deprecated: This class now delegates to NotificationManager
+    console.log('ToastManager is deprecated, using NotificationManager instead');
   }
 
   show(message, type = 'success', duration = 4000) {
-    const toast = document.createElement('div');
-    toast.className = `toast ${type}`;
-    
-    const icons = {
-      success: 'fas fa-check-circle',
-      error: 'fas fa-exclamation-circle',
-      warning: 'fas fa-exclamation-triangle',
-      info: 'fas fa-info-circle'
-    };
-
-    toast.innerHTML = `
-      <div class="toast-content">
-        <i class="toast-icon ${icons[type]}"></i>
-        <span class="toast-message">${message}</span>
-        <button class="toast-close">
-          <i class="fas fa-times"></i>
-        </button>
-      </div>
-    `;
-
-    this.container.appendChild(toast);
-
-    // Show animation
-    setTimeout(() => toast.classList.add('show'), 100);
-
-    // Auto remove
-    const autoRemove = setTimeout(() => this.remove(toast), duration);
-
-    // Manual close
-    toast.querySelector('.toast-close').addEventListener('click', () => {
-      clearTimeout(autoRemove);
-      this.remove(toast);
-    });
+    // Delegate to the new notification system
+    if (window.notificationManager) {
+      return window.notificationManager.add(message, type);
+    } else {
+      // Fallback for when notification manager is not ready
+      console.log(`[${type.toUpperCase()}]`, message);
+    }
   }
 
   remove(toast) {
-    toast.classList.remove('show');
-    setTimeout(() => {
-      if (toast.parentNode) {
-        toast.parentNode.removeChild(toast);
-      }
-    }, 400);
+    // No longer needed with the new system
   }
 }
 
@@ -206,8 +186,13 @@ async function fetchUserDetails() {
   try {
     showSkeleton('userSkeleton');
     
+    const { apiKey } = getAPICredentials();
+    if (!apiKey) {
+      throw new Error('API Key not configured. Please check settings.');
+    }
+    
     const response = await fetch('https://innomatics-api.edmingle.com/nuSource/api/v1/user/usermeta', {
-      headers: { 'APIKEY': API_KEY }
+      headers: { 'APIKEY': apiKey }
     });
 
     if (!response.ok) {
@@ -248,7 +233,7 @@ async function fetchUserDetails() {
 
   } catch (error) {
     console.error('Error fetching user:', error);
-    toastManager.show('Failed to load user profile', 'error');
+    toastManager.show(`Failed to load user profile: ${error.message}`, 'error');
     hideSkeleton('userSkeleton', 'userProfileContent');
   }
 }
@@ -257,11 +242,16 @@ async function fetchExamSubjects() {
   try {
     showSkeleton('examSkeleton');
     
+    const { apiKey, orgId } = getAPICredentials();
+    if (!apiKey) {
+      throw new Error('API Key not configured. Please check settings.');
+    }
+    
     const response = await fetch('https://innomatics-api.edmingle.com/nuSource/api/v1/engage/subjects', {
       method: 'GET',
       headers: {
-        'apikey': API_KEY,
-        'orgid': ORG_ID,
+        'apikey': apiKey,
+        'orgid': orgId,
         'Accept': 'application/json'
       }
     });
@@ -438,13 +428,18 @@ async function fetchAttendanceDataFallback() {
     const thirtyDaysAgo = now - (30 * 24 * 60 * 60);
     const thirtyDaysFromNow = now + (30 * 24 * 60 * 60);
     
+    const { apiKey, orgId } = getAPICredentials();
+    if (!apiKey) {
+      throw new Error('API Key not configured. Please check settings.');
+    }
+    
     const response = await fetch(
       `https://innomatics-api.edmingle.com/nuSource/api/v1/class/attendance?start=${thirtyDaysAgo}&end=${thirtyDaysFromNow}&class_id=412564`, 
       {
         method: 'GET',
         headers: { 
-          'apikey': API_KEY,
-          'orgid': ORG_ID,
+          'apikey': apiKey,
+          'orgid': orgId,
           'Accept': 'application/json'
         }
       }
@@ -651,12 +646,17 @@ async function testAttendanceAPI() {
   console.log('🧪 Testing attendance API...');
   
   try {
+    const { apiKey, orgId } = getAPICredentials();
+    if (!apiKey) {
+      throw new Error('API Key not configured. Please check settings.');
+    }
+    
     // Test with the exact same headers as the working exam API
     const response = await fetch('https://innomatics-api.edmingle.com/nuSource/api/v1/class/attendance?start=1756665000&end=1759256999&class_id=412564', {
       method: 'GET',
       headers: {
-        'apikey': API_KEY,
-        'orgid': ORG_ID,
+        'apikey': apiKey,
+        'orgid': orgId,
         'Accept': 'application/json'
       }
     });
@@ -823,7 +823,8 @@ function handleNavigation(target) {
     '#profile': 'profileSection', 
     '#exams': 'examSection',
     '#recordings': 'recordingsSection',
-    '#analytics': 'analyticsSection'
+    '#analytics': 'analyticsSection',
+    '#settings': 'settingsSection'
   };
   
   // Hide all sections
@@ -869,6 +870,9 @@ function handleNavigation(target) {
         // Scroll to top of recordings section
         sectionElement.scrollTop = 0;
         loadRecordingsPage();
+      } else if (target === '#settings') {
+        // Settings are handled by SettingsManager
+        console.log('Navigated to settings');
       }
     } else {
       // If specific sections don't exist, just show a toast
@@ -1012,13 +1016,37 @@ function smoothScrollTo(elementId) {
 // Initialize dashboard
 async function initializeDashboard() {
   try {
+    console.log('🚀 Initializing Dashboard...');
+    
+    // Wait for settings manager to be ready
+    if (window.settingsManager) {
+      // Update external API config with stored credentials
+      if (window.updateExternalAPIConfig) {
+        window.updateExternalAPIConfig();
+      }
+      
+      // Check if API key is configured
+      const apiKey = window.settingsManager.getAPIKey();
+      if (!apiKey) {
+        // Add notification for missing API key
+        setTimeout(() => {
+          if (window.notificationManager) {
+            notificationManager.add('API Key not configured. Please go to Settings to configure your API credentials.', 'warning');
+          }
+        }, 1000);
+      }
+    }
+    
     // Initialize components
     initializeSidebar();
     initializeRefreshButtons();
     initializeScrollAnimations();
 
-    // Start auto-refresh
-    startAutoRefresh();
+    // Check if auto-refresh is enabled
+    const autoRefreshEnabled = window.settingsManager ? window.settingsManager.getSetting('autoRefresh') : true;
+    if (autoRefreshEnabled) {
+      startAutoRefresh();
+    }
 
     // Initial load with delay for smooth experience
     setTimeout(async () => {
@@ -1038,6 +1066,8 @@ async function initializeDashboard() {
       }, 1500);
       
     }, 500);
+
+    console.log('✅ Dashboard initialized successfully');
 
   } catch (error) {
     console.error('Failed to initialize dashboard:', error);
@@ -1110,8 +1140,13 @@ async function fetchInstitutionInfo() {
     debugLog('Fetching institution info...');
     showSkeleton('institutionSkeleton');
     
+    const { apiKey } = getAPICredentials();
+    if (!apiKey) {
+      throw new Error('API Key not configured. Please check settings.');
+    }
+    
     const response = await fetch('https://innomatics-api.edmingle.com/nuSource/api/v1/institute/instituteinfo?host_name=online.innomatics.in', {
-      headers: { 'APIKEY': API_KEY }
+      headers: { 'APIKEY': apiKey }
     });
 
     if (!response.ok) {

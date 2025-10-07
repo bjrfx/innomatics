@@ -11,10 +11,10 @@ const CONFIG = {
     RECORDINGS: 'https://innomatics.bdotsoftware.com/api/recordings.php'
   },
   
-  // External API configuration (these remain the same)
+  // External API configuration - now managed through settings
   EXTERNAL_API: {
-    KEY: '621f9c81ed009af3605af0d1e244967c',
-    ORG_ID: '257',
+    KEY: '', // Will be loaded from settings
+    ORG_ID: '', // Will be loaded from settings
     BASE_URL: 'https://innomatics-api.edmingle.com/nuSource/api/v1'
   },
   
@@ -55,8 +55,18 @@ function debugLog(...args) {
   }
 }
 
+// Helper function to update external API config with stored credentials
+function updateExternalAPIConfig() {
+  if (window.settingsManager) {
+    const credentials = window.settingsManager.getAPICredentials();
+    CONFIG.EXTERNAL_API.KEY = credentials.apiKey;
+    CONFIG.EXTERNAL_API.ORG_ID = credentials.orgId;
+  }
+}
+
 // Export for use in other scripts
 window.CONFIG = CONFIG;
 window.getApiUrl = getApiUrl;
 window.isDevelopment = isDevelopment;
 window.debugLog = debugLog;
+window.updateExternalAPIConfig = updateExternalAPIConfig;
