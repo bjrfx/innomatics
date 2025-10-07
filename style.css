@@ -2613,8 +2613,8 @@ a:focus {
   padding: 3rem 2rem 2rem; /* Increased top padding to avoid header overlap */
   background: var(--bg-primary);
   min-height: calc(100vh - 120px); /* Account for header height + extra space */
-  width: 100%;
-  margin-left: 0;
+  width: calc(100% - 280px); /* Account for sidebar width */
+  margin-left: 280px; /* Account for sidebar width */
   position: relative;
   z-index: 1;
   overflow-y: auto; /* Allow scrolling if content is long */
@@ -2774,11 +2774,25 @@ a:focus {
 
   .settings-section {
     padding: 1rem;
+    margin-left: 0;
+    width: 100%;
   }
 
   .settings-content .col-lg-4,
   .settings-content .col-lg-8 {
     margin-bottom: 1rem;
+  }
+}
+
+/* Responsive adjustments for sections outside main-content */
+@media (max-width: 768px) {
+  .settings-section,
+  .profile-section,
+  .exam-section,
+  .analytics-section {
+    margin-left: 0;
+    width: 100%;
+    padding: 1rem;
   }
 }
 
