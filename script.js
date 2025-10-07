@@ -877,7 +877,24 @@ function handleNavigation(target) {
         loadRecordingsPage();
       } else if (target === '#settings') {
         // Settings are handled by SettingsManager
-        console.log('Navigated to settings');
+        console.log('Navigated to settings - section should be visible');
+        console.log('Settings section element:', sectionElement);
+        
+        // Ensure settings section is properly visible and accessible
+        sectionElement.style.zIndex = '10';
+        sectionElement.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        
+        // Log the settings form elements for debugging
+        setTimeout(() => {
+          const apiKeyField = document.getElementById('apiKey');
+          const orgIdField = document.getElementById('orgId');
+          console.log('API Key field found:', apiKeyField);
+          console.log('Org ID field found:', orgIdField);
+          
+          if (!apiKeyField) {
+            console.error('API Key field not found! Check if settings HTML is properly loaded.');
+          }
+        }, 100);
       }
     } else {
       // If specific sections don't exist, just show a toast

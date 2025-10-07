@@ -223,7 +223,7 @@ body {
   -webkit-backdrop-filter: blur(20px);
   position: sticky;
   top: 0;
-  z-index: 100;
+  z-index: 50; /* Reduced z-index to prevent overlap with settings content */
   transition: all 0.3s ease;
   box-shadow: var(--shadow-light);
 }
@@ -2610,17 +2610,22 @@ a:focus {
 .profile-section,
 .exam-section,
 .analytics-section {
-  padding: 2rem;
+  padding: 3rem 2rem 2rem; /* Increased top padding to avoid header overlap */
   background: var(--bg-primary);
-  min-height: calc(100vh - 80px); /* Account for header height */
+  min-height: calc(100vh - 120px); /* Account for header height + extra space */
   width: 100%;
   margin-left: 0;
+  position: relative;
+  z-index: 1;
+  overflow-y: auto; /* Allow scrolling if content is long */
 }
 
 .section-header,
 .settings-header {
   margin-bottom: 2rem;
+  margin-top: 1rem; /* Add top margin to prevent header overlap */
   padding-bottom: 1rem;
+  padding-top: 1rem; /* Add top padding for better spacing */
   border-bottom: 1px solid var(--border-color);
 }
 
@@ -2635,6 +2640,18 @@ a:focus {
 
 .settings-content {
   max-width: 1200px;
+  position: relative;
+  z-index: 5;
+  margin-top: 1rem;
+}
+
+.settings-content .row {
+  margin: 0 -15px;
+}
+
+.settings-content .col-lg-8,
+.settings-content .col-lg-4 {
+  padding: 0 15px;
 }
 
 .settings-card {
@@ -2642,6 +2659,9 @@ a:focus {
   border: 1px solid var(--border-color);
   border-radius: 12px;
   overflow: hidden;
+  position: relative;
+  z-index: 10;
+  margin-bottom: 1rem;
 }
 
 .setting-item {
@@ -2691,6 +2711,8 @@ a:focus {
   background: var(--bg-tertiary);
   border: 1px solid var(--border-color);
   color: var(--text-primary);
+  padding: 0.75rem;
+  font-size: 1rem;
 }
 
 .settings-section .form-control:focus {
@@ -2698,11 +2720,21 @@ a:focus {
   border-color: var(--primary-color);
   box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.25);
   color: var(--text-primary);
+  outline: none;
+}
+
+.settings-section .form-label {
+  color: var(--text-primary);
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  display: flex;
+  align-items: center;
 }
 
 .settings-section .form-text {
   color: var(--text-muted);
   font-size: 0.8rem;
+  margin-top: 0.25rem;
 }
 
 .form-check-input:checked {
