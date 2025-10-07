@@ -551,6 +551,130 @@
         <p>No recordings are available at the moment. Check back later for new content.</p>
       </div>
     </div>
+
+    <!-- Settings Section (Hidden by default) -->
+    <div id="settingsSection" class="settings-section" style="display: none;">
+      <div class="settings-header">
+        <div class="settings-title">
+          <i class="fas fa-cog me-2"></i>
+          Dashboard Settings
+        </div>
+      </div>
+
+      <div class="settings-content">
+        <div class="row g-4">
+          <!-- API Configuration Card -->
+          <div class="col-lg-8">
+            <div class="dashboard-card settings-card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fas fa-key me-2"></i>
+                  API Configuration
+                </div>
+              </div>
+              <div class="card-body">
+                <form id="apiConfigForm">
+                  <div class="mb-3">
+                    <label for="apiKey" class="form-label">
+                      <i class="fas fa-key me-2"></i>
+                      API Key
+                    </label>
+                    <div class="input-group">
+                      <input type="password" class="form-control" id="apiKey" placeholder="Enter your API key">
+                      <button class="btn btn-outline-secondary" type="button" id="toggleApiKey">
+                        <i class="fas fa-eye"></i>
+                      </button>
+                    </div>
+                    <div class="form-text">
+                      <i class="fas fa-info-circle me-1"></i>
+                      Your API key is stored securely in your browser's local storage.
+                    </div>
+                  </div>
+                  
+                  <div class="mb-3">
+                    <label for="orgId" class="form-label">
+                      <i class="fas fa-building me-2"></i>
+                      Organization ID
+                    </label>
+                    <input type="text" class="form-control" id="orgId" placeholder="Enter organization ID">
+                  </div>
+
+                  <div class="api-status mb-3" id="apiStatus">
+                    <div class="status-indicator">
+                      <i class="fas fa-circle text-warning"></i>
+                      <span>API connection not tested</span>
+                    </div>
+                  </div>
+
+                  <div class="btn-group">
+                    <button type="submit" class="btn btn-primary">
+                      <i class="fas fa-save me-2"></i>
+                      Save Configuration
+                    </button>
+                    <button type="button" class="btn btn-outline-primary" id="testApiConnection">
+                      <i class="fas fa-vial me-2"></i>
+                      Test Connection
+                    </button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+
+          <!-- Notification Settings Card -->
+          <div class="col-lg-4">
+            <div class="dashboard-card settings-card">
+              <div class="card-header">
+                <div class="card-title">
+                  <i class="fas fa-bell me-2"></i>
+                  Notification Settings
+                </div>
+              </div>
+              <div class="card-body">
+                <div class="setting-item">
+                  <div class="setting-label">
+                    <i class="fas fa-desktop me-2"></i>
+                    Desktop Notifications
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="desktopNotifications">
+                  </div>
+                </div>
+                
+                <div class="setting-item">
+                  <div class="setting-label">
+                    <i class="fas fa-volume-up me-2"></i>
+                    Sound Notifications
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="soundNotifications">
+                  </div>
+                </div>
+
+                <div class="setting-item">
+                  <div class="setting-label">
+                    <i class="fas fa-sync me-2"></i>
+                    Auto Refresh
+                  </div>
+                  <div class="form-check form-switch">
+                    <input class="form-check-input" type="checkbox" id="autoRefresh" checked>
+                  </div>
+                </div>
+
+                <hr>
+
+                <div class="notification-actions">
+                  <button class="btn btn-outline-danger btn-sm w-100" id="clearNotificationHistory">
+                    <i class="fas fa-trash me-2"></i>
+                    Clear Notification History
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 
   <!-- Profile Section (Hidden by default) -->
@@ -589,130 +713,6 @@
     </div>
     <div class="section-content">
       <p>Detailed analytics coming soon...</p>
-    </div>
-  </div>
-
-  <!-- Settings Section (Hidden by default) -->
-  <div id="settingsSection" class="settings-section" style="display: none;">
-    <div class="settings-header">
-      <div class="settings-title">
-        <i class="fas fa-cog me-2"></i>
-        Dashboard Settings
-      </div>
-    </div>
-
-    <div class="settings-content">
-      <div class="row g-4">
-        <!-- API Configuration Card -->
-        <div class="col-lg-8">
-          <div class="dashboard-card settings-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="fas fa-key me-2"></i>
-                API Configuration
-              </div>
-            </div>
-            <div class="card-body">
-              <form id="apiConfigForm">
-                <div class="mb-3">
-                  <label for="apiKey" class="form-label">
-                    <i class="fas fa-key me-2"></i>
-                    API Key
-                  </label>
-                  <div class="input-group">
-                    <input type="password" class="form-control" id="apiKey" placeholder="Enter your API key">
-                    <button class="btn btn-outline-secondary" type="button" id="toggleApiKey">
-                      <i class="fas fa-eye"></i>
-                    </button>
-                  </div>
-                  <div class="form-text">
-                    <i class="fas fa-info-circle me-1"></i>
-                    Your API key is stored securely in your browser's local storage.
-                  </div>
-                </div>
-                
-                <div class="mb-3">
-                  <label for="orgId" class="form-label">
-                    <i class="fas fa-building me-2"></i>
-                    Organization ID
-                  </label>
-                  <input type="text" class="form-control" id="orgId" placeholder="Enter organization ID">
-                </div>
-
-                <div class="api-status mb-3" id="apiStatus">
-                  <div class="status-indicator">
-                    <i class="fas fa-circle text-warning"></i>
-                    <span>API connection not tested</span>
-                  </div>
-                </div>
-
-                <div class="btn-group">
-                  <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-save me-2"></i>
-                    Save Configuration
-                  </button>
-                  <button type="button" class="btn btn-outline-primary" id="testApiConnection">
-                    <i class="fas fa-vial me-2"></i>
-                    Test Connection
-                  </button>
-                </div>
-              </form>
-            </div>
-          </div>
-        </div>
-
-        <!-- Notification Settings Card -->
-        <div class="col-lg-4">
-          <div class="dashboard-card settings-card">
-            <div class="card-header">
-              <div class="card-title">
-                <i class="fas fa-bell me-2"></i>
-                Notification Settings
-              </div>
-            </div>
-            <div class="card-body">
-              <div class="setting-item">
-                <div class="setting-label">
-                  <i class="fas fa-desktop me-2"></i>
-                  Desktop Notifications
-                </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="desktopNotifications">
-                </div>
-              </div>
-              
-              <div class="setting-item">
-                <div class="setting-label">
-                  <i class="fas fa-volume-up me-2"></i>
-                  Sound Notifications
-                </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="soundNotifications">
-                </div>
-              </div>
-
-              <div class="setting-item">
-                <div class="setting-label">
-                  <i class="fas fa-sync me-2"></i>
-                  Auto Refresh
-                </div>
-                <div class="form-check form-switch">
-                  <input class="form-check-input" type="checkbox" id="autoRefresh" checked>
-                </div>
-              </div>
-
-              <hr>
-
-              <div class="notification-actions">
-                <button class="btn btn-outline-danger btn-sm w-100" id="clearNotificationHistory">
-                  <i class="fas fa-trash me-2"></i>
-                  Clear Notification History
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
     </div>
   </div>
 

@@ -23,6 +23,19 @@ class NotificationManager {
     this.setupEventListeners();
     this.updateBadge();
     this.renderNotifications();
+    
+    // Process any queued notifications
+    this.processQueuedNotifications();
+  }
+
+  processQueuedNotifications() {
+    if (window.pendingNotifications && window.pendingNotifications.length > 0) {
+      console.log('Processing queued notifications:', window.pendingNotifications);
+      window.pendingNotifications.forEach(notification => {
+        this.add(notification.message, notification.type);
+      });
+      window.pendingNotifications = [];
+    }
   }
 
   setupEventListeners() {

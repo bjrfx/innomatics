@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>API Key & Notification System Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 800px;
+      margin: 50px auto;
+      padding: 20px;
+      background: #f5f5f5;
+    }
+    .test-container {
+      background: white;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    }
+    .test-section {
+      margin-bottom: 30px;
+      padding: 20px;
+      border: 2px solid #e0e0e0;
+      border-radius: 8px;
+    }
+    .test-section h3 {
+      color: #333;
+      margin-bottom: 15px;
+    }
+    .btn {
+      background: #007bff;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      border-radius: 5px;
+      cursor: pointer;
+      margin: 5px;
+    }
+    .btn:hover {
+      background: #0056b3;
+    }
+    .btn.success { background: #28a745; }
+    .btn.warning { background: #ffc107; color: #000; }
+    .btn.danger { background: #dc3545; }
+    .form-group {
+      margin-bottom: 15px;
+    }
+    .form-group label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: bold;
+    }
+    .form-group input {
+      width: 100%;
+      padding: 8px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+    }
+    .status {
+      padding: 10px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+    .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+    .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+  </style>
+</head>
+<body>
+  <div class="test-container">
+    <h1>🧪 API Key & Notification System Test</h1>
+    <p>This page demonstrates the new API key management and notification features.</p>
+    
+    <div class="test-section">
+      <h3>🔑 API Key Management Test</h3>
+      <div class="form-group">
+        <label for="testApiKey">API Key:</label>
+        <input type="password" id="testApiKey" placeholder="Enter API key">
+      </div>
+      <div class="form-group">
+        <label for="testOrgId">Organization ID:</label>
+        <input type="text" id="testOrgId" placeholder="Enter Org ID" value="257">
+      </div>
+      <button class="btn" onclick="saveTestCredentials()">Save Credentials</button>
+      <button class="btn" onclick="loadTestCredentials()">Load Saved Credentials</button>
+      <button class="btn" onclick="testAPIConnection()">Test API Connection</button>
+      <div id="credentialStatus"></div>
+    </div>
+
+    <div class="test-section">
+      <h3>🔔 Notification System Test</h3>
+      <p>Test different types of notifications:</p>
+      <button class="btn success" onclick="showNotification('Success notification test!', 'success')">Success Notification</button>
+      <button class="btn danger" onclick="showNotification('Error notification test!', 'error')">Error Notification</button>
+      <button class="btn warning" onclick="showNotification('Warning notification test!', 'warning')">Warning Notification</button>
+      <button class="btn" onclick="showNotification('Info notification test!', 'info')">Info Notification</button>
+      <br><br>
+      <button class="btn" onclick="clearAllNotifications()">Clear All Notifications</button>
+      <button class="btn" onclick="showMultipleNotifications()">Show Multiple Notifications</button>
+    </div>
+
+    <div class="test-section">
+      <h3>📊 Integration Test</h3>
+      <p>Test the full integration with the main dashboard:</p>
+      <button class="btn" onclick="window.open('index.html', '_blank')">Open Main Dashboard</button>
+      <p><small>Click to open the main dashboard and test the Settings page and notification bell icon.</small></p>
+    </div>
+  </div>
+
+  <script>
+    // Simple test functions for API key management
+    function saveTestCredentials() {
+      const apiKey = document.getElementById('testApiKey').value;
+      const orgId = document.getElementById('testOrgId').value;
+      
+      if (!apiKey || !orgId) {
+        showStatus('Please enter both API key and Organization ID', 'error');
+        return;
+      }
+      
+      // Save to localStorage (same format as the main dashboard)
+      const settings = {
+        apiKey: apiKey,
+        orgId: orgId,
+        desktopNotifications: false,
+        soundNotifications: false,
+        autoRefresh: true
+      };
+      
+      localStorage.setItem('dashboard-settings', JSON.stringify(settings));
+      showStatus('✅ Credentials saved successfully!', 'success');
+    }
+    
+    function loadTestCredentials() {
+      const savedSettings = localStorage.getItem('dashboard-settings');
+      if (savedSettings) {
+        try {
+          const settings = JSON.parse(savedSettings);
+          document.getElementById('testApiKey').value = settings.apiKey || '';
+          document.getElementById('testOrgId').value = settings.orgId || '257';
+          showStatus('✅ Credentials loaded successfully!', 'success');
+        } catch (error) {
+          showStatus('❌ Error loading credentials: ' + error.message, 'error');
+        }
+      } else {
+        showStatus('⚠️ No saved credentials found', 'error');
+      }
+    }
+    
+    async function testAPIConnection() {
+      const apiKey = document.getElementById('testApiKey').value;
+      if (!apiKey) {
+        showStatus('❌ Please enter an API key first', 'error');
+        return;
+      }
+      
+      showStatus('🔄 Testing API connection...', 'success');
+      
+      try {
+        const response = await fetch('https://innomatics-api.edmingle.com/nuSource/api/v1/user/usermeta', {
+          headers: { 'APIKEY': apiKey }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          showStatus('✅ API connection successful! User: ' + (data.user?.name || 'Unknown'), 'success');
+        } else {
+          showStatus('❌ API connection failed: HTTP ' + response.status, 'error');
+        }
+      } catch (error) {
+        showStatus('❌ API connection error: ' + error.message, 'error');
+      }
+    }
+    
+    function showStatus(message, type) {
+      const statusDiv = document.getElementById('credentialStatus');
+      statusDiv.innerHTML = `<div class="status ${type}">${message}</div>`;
+    }
+    
+    // Simple notification system for testing
+    let testNotifications = [];
+    
+    function showNotification(message, type) {
+      const notification = {
+        id: Date.now(),
+        message: message,
+        type: type,
+        timestamp: Date.now()
+      };
+      
+      testNotifications.unshift(notification);
+      
+      // Limit to 10 notifications
+      if (testNotifications.length > 10) {
+        testNotifications = testNotifications.slice(0, 10);
+      }
+      
+      console.log(`[${type.toUpperCase()}] ${message}`);
+      alert(`Test Notification (${type}): ${message}\n\nTotal notifications: ${testNotifications.length}`);
+    }
+    
+    function clearAllNotifications() {
+      testNotifications = [];
+      console.log('All test notifications cleared');
+      alert('All test notifications cleared!');
+    }
+    
+    function showMultipleNotifications() {
+      showNotification('First notification', 'info');
+      setTimeout(() => showNotification('Second notification', 'success'), 500);
+      setTimeout(() => showNotification('Third notification', 'warning'), 1000);
+    }
+    
+    // Load saved credentials on page load
+    window.addEventListener('load', () => {
+      loadTestCredentials();
+    });
+  </script>
+</body>
+</html>

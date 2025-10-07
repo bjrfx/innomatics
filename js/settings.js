@@ -90,7 +90,17 @@ class SettingsManager {
     const soundNotifications = document.getElementById('soundNotifications');
     const autoRefresh = document.getElementById('autoRefresh');
 
-    if (apiKeyInput) apiKeyInput.value = this.settings.apiKey;
+    if (apiKeyInput) {
+      apiKeyInput.value = this.settings.apiKey;
+      // If no API key is set, show a placeholder notification
+      if (!this.settings.apiKey) {
+        setTimeout(() => {
+          if (window.notificationManager) {
+            notificationManager.add('Please configure your API key in Settings to access live data.', 'warning');
+          }
+        }, 3000);
+      }
+    }
     if (orgIdInput) orgIdInput.value = this.settings.orgId;
     if (desktopNotifications) desktopNotifications.checked = this.settings.desktopNotifications;
     if (soundNotifications) soundNotifications.checked = this.settings.soundNotifications;

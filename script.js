@@ -114,25 +114,30 @@ class ThemeManager {
 
 const themeManager = new ThemeManager();
 
-// Toast Notification System - Updated to use NotificationManager
+// Toast Notification System - Completely replaced with NotificationManager
 class ToastManager {
   constructor() {
-    // Deprecated: This class now delegates to NotificationManager
-    console.log('ToastManager is deprecated, using NotificationManager instead');
+    // This class now completely delegates to NotificationManager
+    console.log('ToastManager initialized - all notifications will go to notification panel');
   }
 
   show(message, type = 'success', duration = 4000) {
-    // Delegate to the new notification system
+    // Always delegate to the new notification system
     if (window.notificationManager) {
       return window.notificationManager.add(message, type);
     } else {
-      // Fallback for when notification manager is not ready
-      console.log(`[${type.toUpperCase()}]`, message);
+      // Queue the notification if notification manager is not ready
+      if (!window.pendingNotifications) {
+        window.pendingNotifications = [];
+      }
+      window.pendingNotifications.push({ message, type });
+      console.log(`[QUEUED ${type.toUpperCase()}]`, message);
     }
   }
 
   remove(toast) {
     // No longer needed with the new system
+    console.log('ToastManager.remove() is deprecated');
   }
 }
 
@@ -1350,6 +1355,14 @@ document.addEventListener('DOMContentLoaded', () => {
   initializeDashboard();
   addInteractionFeedback();
   monitorConnection();
+  
+  // Test notification after 2 seconds
+  setTimeout(() => {
+    if (window.notificationManager) {
+      notificationManager.add('Welcome to Innomatics Dashboard! 🎉', 'success');
+      notificationManager.add('All notifications now appear in the notification panel.', 'info');
+    }
+  }, 2000);
   
   // Log performance after everything loads
   window.addEventListener('load', logPerformance);

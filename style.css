@@ -2612,7 +2612,9 @@ a:focus {
 .analytics-section {
   padding: 2rem;
   background: var(--bg-primary);
-  min-height: 100vh;
+  min-height: calc(100vh - 80px); /* Account for header height */
+  width: 100%;
+  margin-left: 0;
 }
 
 .section-header,
@@ -2746,4 +2748,17 @@ a:focus {
   .settings-content .col-lg-8 {
     margin-bottom: 1rem;
   }
+}
+
+/* Hide the old toast container and all toast elements since we're using notification panel now */
+.toast-container,
+.toast,
+.toast.show,
+.toast.success,
+.toast.error,
+.toast.warning,
+.toast.info {
+  display: none !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
 }
